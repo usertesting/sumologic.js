@@ -30,31 +30,63 @@ var SumoLogic = function () {
     key: "log",
     value: function log(msg) {
       this.validateSettings();
-      this.messages.push(msg);
+      this.addMessage(msg);
       if (!this.intervalId) {
         this.startDumping();
       }
-      this.dump(this.clearMessages.bind(this));
+    }
+  }, {
+    key: "addMessage",
+    value: function addMessage(msg) {
+      if (msg && typeof msg === "string") {
+        msg = { message: msg };
+      }
+      if (msg) {
+        this.messages.push(this.injectContext(msg));
+      }
     }
   }, {
     key: "startDumping",
     value: function startDumping() {
-      this.intervalId = setInterval(this.dump.bind(this), this.syncInterval);
+      var _this = this;
+
+      this.intervalId = setInterval(function () {
+        return _this.dump();
+      }, this.syncInterval);
     }
   }, {
     key: "dump",
-    value: function dump(succes_cb) {
-      if (this.messages.length > 0) {
-        _jquery2.default.ajax({
-          type: "POST",
-          url: SumoLogic.settings.endpoint,
-          data: this.messages.map(function (s) {
-            return JSON.stringify(s);
-          }).join("\n")
-        }).done(function (response) {
-          return succes_cb(response);
-        });
+    value: function dump(success_cb) {
+      if (this.messages.length == 0) return;
+
+      this.sendMessages().done(function (response) {
+        return onMessagesSent(response, success_cb);
+      });
+    }
+  }, {
+    key: "sendMessages",
+    value: function sendMessages() {
+      return _jquery2.default.ajax({
+        type: "POST",
+        url: SumoLogic.settings.endpoint,
+        data: this.sentMessages()
+      });
+    }
+  }, {
+    key: "onMessagesSent",
+    value: function onMessagesSent(response, cb) {
+      this.clearMessages();
+
+      if (cb) {
+        succes_cb(response);
       }
+    }
+  }, {
+    key: "sentMessages",
+    value: function sentMessages() {
+      return this.messages.map(function (s) {
+        return JSON.stringify(s);
+      }).join("\n");
     }
   }, {
     key: "clearMessages",
@@ -69,9 +101,14 @@ var SumoLogic = function () {
       }
     }
   }, {
+    key: "injectContext",
+    value: function injectContext(msg) {
+      return _jquery2.default.extend(msg, { context: SumoLogic.context });
+    }
+  }, {
     key: "syncInterval",
     get: function get() {
-      this.settings.syncInterval || SYNC_INTERVAL;
+      return this.settings.syncInterval || SYNC_INTERVAL;
     }
   }], [{
     key: "log",
@@ -86,6 +123,14 @@ var SumoLogic = function () {
     },
     get: function get() {
       return this._settings;
+    }
+  }, {
+    key: "context",
+    set: function set(context) {
+      this._context = context;
+    },
+    get: function get() {
+      return this._context;
     }
   }]);
 

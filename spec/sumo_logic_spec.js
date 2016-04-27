@@ -4,7 +4,7 @@ import $ from 'jquery';
 describe("SumoLogic", ()=>{
   const validSettings = {
     endpoint: "http://sumologic_endpoint.com",
-    sync_interval: 2000
+    syncInterval: 2000
   }
 
 
@@ -37,6 +37,43 @@ describe("SumoLogic", ()=>{
     });
   });
 
+  describe("#addMessage", ()=>{
+    let sumoLogic;
+
+    beforeEach(()=>{
+      sumoLogic = new SumoLogic(validSettings);
+    });
+
+    it("adds a string as an object", ()=>{
+      sumoLogic.addMessage("hello")
+      expect(sumoLogic.messages[0]).toEqual({message: "hello"});
+    });
+
+    it("adds a an object as is", ()=>{
+      sumoLogic.addMessage({hello: "this is great"});
+      expect(sumoLogic.messages[0]).toEqual({hello: "this is great"});
+    });
+
+    it("ignores an empty object", ()=>{
+      sumoLogic.addMessage("");
+      sumoLogic.addMessage();
+      sumoLogic.addMessage(null);
+      expect(sumoLogic.messages.length).toEqual(0);
+    });
+
+    describe("context is available", ()=>{
+      const context = {
+        session_id: 1000
+      }
+      
+      it("injects context into the message", ()=>{
+        SumoLogic.context = context;
+        sumoLogic.addMessage("HELLO");
+        let message = sumoLogic.messages[0];
+        expect(message.context).toEqual(context);
+      });
+    })
+  })
   describe("#dump", ()=>{
     let sumoLogic;
     beforeEach(function() {
@@ -64,7 +101,6 @@ describe("SumoLogic", ()=>{
 
       let request = jasmine.Ajax.requests.mostRecent();
       expect(request).toEqual(undefined);
-
     });
   });
 
@@ -77,4 +113,6 @@ describe("SumoLogic", ()=>{
       expect(sumoLogic.messages.length).toEqual(0);
     });
   });
+
+
 });
