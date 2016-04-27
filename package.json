@@ -5,6 +5,7 @@
   "main": "build/sumologic.js",
   "scripts": {
     "watch": "webpack -d --watch",
+    "build": "webpack -p",
     "test": "karma start karma.conf.js"
   },
   "author": "Imad Mouaddine",
