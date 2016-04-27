@@ -1,4 +1,5 @@
-node_modules
+node_modules/
 npm-*
-build
 .idea
+*.log
+*.DS_Store

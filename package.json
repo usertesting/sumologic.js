@@ -2,7 +2,7 @@
   "name": "sumologic",
   "version": "1.0.0",
   "description": "Send logs to SumoLogic HTTP Endpoint",
-  "main": "build/sumo_logic.js",
+  "main": "build/sumologic.js",
   "scripts": {
     "watch": "webpack -d --watch",
     "build": "webpack -p",
