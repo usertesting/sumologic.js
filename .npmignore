@@ -1,4 +1,5 @@
 .idea
 spec
+src
 webpack.config.js
 tests.webpack.js
