@@ -14,7 +14,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DUMP_INTERVAL = 2000;
+var SYNC_INTERVAL = 5000;
 
 var SumoLogic = function () {
   function SumoLogic() {
@@ -39,7 +39,7 @@ var SumoLogic = function () {
   }, {
     key: "startDumping",
     value: function startDumping() {
-      this.intervalId = setInterval(this.dump.bind(this), DUMP_INTERVAL);
+      this.intervalId = setInterval(this.dump.bind(this), this.syncInterval);
     }
   }, {
     key: "dump",
@@ -67,6 +67,11 @@ var SumoLogic = function () {
       if (!this.settings.endpoint) {
         throw new Error("Endpoint is missing");
       }
+    }
+  }, {
+    key: "syncInterval",
+    get: function get() {
+      this.settings.syncInterval || SYNC_INTERVAL;
     }
   }], [{
     key: "log",

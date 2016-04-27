@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-const DUMP_INTERVAL = 2000;
+const SYNC_INTERVAL = 5000;
 
 class SumoLogic {
   constructor(settings={}) {
@@ -21,6 +21,10 @@ class SumoLogic {
     return this._settings;
   }
 
+  get syncInterval() {
+    this.settings.syncInterval || SYNC_INTERVAL;
+  }
+
   log(msg) {
     this.validateSettings();
     this.messages.push(msg);
@@ -31,7 +35,7 @@ class SumoLogic {
   }
 
   startDumping() {
-    this.intervalId = setInterval(this.dump.bind(this), DUMP_INTERVAL);
+    this.intervalId = setInterval(this.dump.bind(this), this.syncInterval);
   }
 
   dump(succes_cb){

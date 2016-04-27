@@ -3,7 +3,8 @@ import $ from 'jquery';
 
 describe("SumoLogic", ()=>{
   const validSettings = {
-    endpoint: "http://sumologic_endpoint.com"
+    endpoint: "http://sumologic_endpoint.com",
+    sync_interval: 2000
   }
 
 
@@ -27,11 +28,10 @@ describe("SumoLogic", ()=>{
 
     it("starts dumping", ()=>{
       let sumoLogic = new SumoLogic(validSettings);
-      spyOn(sumoLogic, 'startDumping');
+      let spy = spyOn(sumoLogic, 'startDumping');
       jasmine.clock().install();
       sumoLogic.log("anything");
-      jasmine.clock().tick(20001);
-
+      jasmine.clock().tick(validSettings.syncInteval-2);
       expect(sumoLogic.startDumping).toHaveBeenCalled();
       jasmine.clock().uninstall();
     });
