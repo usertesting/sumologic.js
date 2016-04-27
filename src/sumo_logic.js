@@ -1,15 +1,16 @@
-import request from 'request';
-import jQuery from 'jquery';
+import $ from "jquery";
+
+const DUMP_INTERVAL = 2000;
 
 class SumoLogic {
-  static log(msg) {
-    this.logger = this.logger || new SumoLogic();
-    this.logger.log(msg);
+  constructor(settings={}) {
+    this.settings = settings;
+    this.messages = [];
   }
 
-  constructor() {
-    this.settings = SumoLogic.settings;
-    this.messages = [];
+  static log(msg) {
+    this.logger = this.logger || new SumoLogic(this.settings);
+    this.logger.log(msg);
   }
 
   static set settings(new_settings) {
@@ -17,28 +18,40 @@ class SumoLogic {
   }
 
   static get settings() {
-    return this._settings || {};
+    return this._settings;
   }
-
 
   log(msg) {
-    SumoLogic.validateSettings()
+    this.validateSettings();
     this.messages.push(msg);
-    this.send();
+    if(!this.intervalId){
+      this.startDumping();
+    }
+    this.dump(this.clearMessages.bind(this));
   }
 
-  send(){
-    jQuery.post({
-          url: SumoLogic.settings.endpoint,
-          data: this.messages.join("\n")
-        });
+  startDumping() {
+    this.intervalId = setInterval(this.dump.bind(this), DUMP_INTERVAL);
   }
 
-  static validateSettings(){
+  dump(succes_cb){
+    if(this.messages.length > 0) {
+      $.ajax({
+        type: "POST",
+        url: SumoLogic.settings.endpoint,
+        data: this.messages.map((s) => JSON.stringify(s)).join("\n")
+      }).done((response)=> succes_cb(response));
+    }
+  }
+
+  clearMessages() {
+    this.messages = [];
+  }
+
+  validateSettings(){
     if(!this.settings.endpoint) {
       throw new Error("Endpoint is missing");
     }
   }
-
-
-} export default SumoLogic;
+}
+export default SumoLogic;

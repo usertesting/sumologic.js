@@ -1,10 +1,10 @@
 var webpack = require('webpack');
 
 var config = {
-  entry: './src/main.js',
+  entry: './src/sumo_logic.js',
   output: {
-    path: './dist',
-    filename: 'bundle.js'
+    path: './build',
+    filename: 'sumologic.js'
   },
   module: {
       loaders: [
@@ -13,7 +13,7 @@ var config = {
           loader: 'babel-loader',
           exclude: /node_modules/,
           query: {
-            presets: ['es2015', 'stage-0']
+            presets: ['es2015']
           }
         }
       ]
