@@ -50,7 +50,7 @@ class SumoLogic {
       msg = { message: msg };
     }
     if(msg){
-      this.messages.push(this.injectContext(msg));
+      this.messages.push(this.injectContext(this.injectTimeStamp(msg)));
     }
   }
 
@@ -92,6 +92,10 @@ class SumoLogic {
     if(!this.settings.endpoint) {
       throw new Error("Endpoint is missing");
     }
+  }
+
+  injectTimeStamp(msg) {
+    return $.extend(msg, { timestamp: new Date().toString()} )
   }
 
   injectContext(msg) {

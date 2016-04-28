@@ -46,12 +46,18 @@ describe("SumoLogic", ()=>{
 
     it("adds a string as an object", ()=>{
       sumoLogic.addMessage("hello")
-      expect(sumoLogic.messages[0]).toEqual({message: "hello"});
+      expect(sumoLogic.messages[0]["message"]).toEqual("hello");
     });
 
     it("adds a an object as is", ()=>{
       sumoLogic.addMessage({hello: "this is great"});
-      expect(sumoLogic.messages[0]).toEqual({hello: "this is great"});
+      expect(sumoLogic.messages[0].hello).toEqual("this is great");
+    });
+
+    it("adds current time as a timestamp field", ()=>{
+      let currentTime = new Date();
+      sumoLogic.addMessage({hello: "this is great"});
+      expect(sumoLogic.messages[0]["timestamp"]).toEqual(currentTime.toString());
     });
 
     it("ignores an empty object", ()=>{
@@ -65,7 +71,7 @@ describe("SumoLogic", ()=>{
       const context = {
         session_id: 1000
       }
-      
+
       it("injects context into the message", ()=>{
         SumoLogic.context = context;
         sumoLogic.addMessage("HELLO");

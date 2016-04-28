@@ -42,7 +42,7 @@ var SumoLogic = function () {
         msg = { message: msg };
       }
       if (msg) {
-        this.messages.push(this.injectContext(msg));
+        this.messages.push(this.injectContext(this.injectTimeStamp(msg)));
       }
     }
   }, {
@@ -101,6 +101,11 @@ var SumoLogic = function () {
       if (!this.settings.endpoint) {
         throw new Error("Endpoint is missing");
       }
+    }
+  }, {
+    key: "injectTimeStamp",
+    value: function injectTimeStamp(msg) {
+      return _jquery2.default.extend(msg, { timestamp: new Date().toString() });
     }
   }, {
     key: "injectContext",
