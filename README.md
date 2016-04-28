@@ -17,7 +17,7 @@
 ### Usage
 You need to import `SumoLogic` module:
 
-`import SumoLogic from 'sumologic';`
+`import SumoLogic from 'sumologic.js';`
 
 And set the settings:
 
