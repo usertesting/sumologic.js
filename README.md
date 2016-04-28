@@ -9,6 +9,7 @@
 ### Run the specs
 `npm run test`
 
+---
 
 ### Usage
 You need to import `SumoLogic` module:
@@ -17,25 +18,28 @@ You need to import `SumoLogic` module:
 
 And set the settings:
 
-`SumoLogic.settings = {
+```javascript
+SumoLogic.settings = {
   syncInterval: 3000,
   endpoint: "{your Sumo Logic http endpoint}"
-};`
+};
+```
 
 Then log:
 
-`SumoLogic.send("message");` 
+`SumoLogic.send("message");`
 
 `SumoLogic.send({message: "log", id: 222});`
 
-#### Context 
+#### Context
 It is possible to attach context to the logs. Here is how to do it:
-
+```javascript
 SumLogic.context = {
   host: http://example.com,
   object_id: 22200
 };
-
+```
+---
 
 ### Settings:
 `syncInterval` is the frequency we're sending the logs to SumoLogic.
@@ -44,10 +48,3 @@ SumLogic.context = {
 
 ## Additional methods
 `SumoLogic.dump()` dump all the logs that are not sent yet to SumoLogic. One use case for this is when you need to make sure all the logs are sent before closing your application.
-
-
-
-
-
-
-
