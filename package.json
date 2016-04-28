@@ -1,5 +1,5 @@
 {
-  "name": "sumologic",
+  "name": "sumologic.js",
   "version": "1.0.0",
   "description": "Send logs to SumoLogic HTTP Endpoint",
   "main": "build/sumo_logic.js",
@@ -9,7 +9,7 @@
     "test": "karma start karma.conf.js"
   },
   "author": "Imad Mouaddine",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.7.7",
     "babel-core": "^6.7.7",

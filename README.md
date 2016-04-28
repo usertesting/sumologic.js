@@ -1,5 +1,8 @@
 # sumologic.js
 
+### Installation
+`npm install --save sumologic.js`
+
 ### Build the module
 `npm run build`
 
