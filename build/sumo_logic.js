@@ -57,10 +57,12 @@ var SumoLogic = function () {
   }, {
     key: "dump",
     value: function dump(success_cb) {
+      var _this2 = this;
+
       if (this.messages.length == 0) return;
 
       this.sendMessages().done(function (response) {
-        return onMessagesSent(response, success_cb);
+        return _this2.onMessagesSent(response, success_cb);
       });
     }
   }, {
@@ -115,6 +117,11 @@ var SumoLogic = function () {
     value: function log(msg) {
       this.logger = this.logger || new SumoLogic(this.settings);
       this.logger.log(msg);
+    }
+  }, {
+    key: "dump",
+    value: function dump(cb) {
+      this.logger.dump(cb);
     }
   }, {
     key: "settings",

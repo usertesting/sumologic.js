@@ -13,6 +13,10 @@ class SumoLogic {
     this.logger.log(msg);
   }
 
+  static dump(cb){
+    this.logger.dump(cb);
+  }
+
   static set settings(new_settings) {
     this._settings = new_settings;
   }
@@ -49,7 +53,7 @@ class SumoLogic {
       this.messages.push(this.injectContext(msg));
     }
   }
-  
+
   startDumping() {
     this.intervalId = setInterval(()=> this.dump(), this.syncInterval);
   }
@@ -57,7 +61,7 @@ class SumoLogic {
   dump(success_cb){
     if(this.messages.length == 0) return;
 
-    this.sendMessages().done((response)=> onMessagesSent(response, success_cb));
+    this.sendMessages().done((response)=> this.onMessagesSent(response, success_cb));
   }
 
   sendMessages() {
