@@ -1,6 +1,6 @@
 {
   "name": "sumologic.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Send logs to SumoLogic HTTP Endpoint",
   "main": "build/sumo_logic.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "karma-jasmine-ajax": "^0.1.13",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.26",
     "phantomjs-prebuilt": "^2.1.7",
     "webpack": "^1.13.0"
   },

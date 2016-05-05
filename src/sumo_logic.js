@@ -7,7 +7,7 @@ class SumoLogic {
     this.settings = settings;
     this.messages = [];
   }
-
+  
   static log(msg) {
     this.logger = this.logger || new SumoLogic(this.settings);
     this.logger.log(msg);
