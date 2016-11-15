@@ -72,7 +72,7 @@ describe("SumoLogic", ()=>{
         console.warn("This", "is");
         expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
           message: "This is",
-          level: 'warn',
+          level: 'warning',
         }));
         expect(originalFunction).toHaveBeenCalledWith("This", "is");
       });
@@ -126,12 +126,17 @@ describe("SumoLogic", ()=>{
       });
     });
   });
- 
 
-  describe("#log", ()=>{
+  describe("#log", () => {
+    let sumoLogic;
+
+    beforeEach(()=>{
+      sumoLogic = new SumoLogic(validSettings);
+    });
+
     describe("settings are provided", ()=>{
       it("does not throw an error", ()=>{
-        expect(() => SumoLogic.log("message")).not.toThrow();
+        expect(() => sumoLogic.log("message")).not.toThrow();
       });
     });
 
@@ -151,45 +156,40 @@ describe("SumoLogic", ()=>{
       expect(sumoLogic.startDumping).toHaveBeenCalled();
       jasmine.clock().uninstall();
     });
-  });
-
-  describe("#addMessage", ()=>{
-    let sumoLogic;
-
-    beforeEach(()=>{
-      sumoLogic = new SumoLogic(validSettings);
-    });
 
     it("adds a string as an object", ()=>{
-      sumoLogic.addMessage("hello")
+      sumoLogic.log("hello")
       expect(sumoLogic.messages[0]["message"]).toEqual("hello");
     });
 
     it("adds a an object as is", ()=>{
-      sumoLogic.addMessage({hello: "this is great"});
+      sumoLogic.log({ hello: "this is great" });
       expect(sumoLogic.messages[0].hello).toEqual("this is great");
     });
 
     it("adds current time as a timestamp field", ()=>{
       let currentTime = new Date();
-      sumoLogic.addMessage({hello: "this is great"});
+      sumoLogic.log({hello: "this is great"});
       expect(sumoLogic.messages[0]["timestamp"]).toEqual(currentTime.toString());
     });
 
-    it("adds log level by default", () => {
-      sumoLogic.addMessage({ hello: "this is great" });
+    it("set log level to info by default", () => {
+      sumoLogic.log({ hello: "this is great" });
       expect(sumoLogic.messages[0]["level"]).toEqual("info");
     });
 
-    it("adds provided log level", () => {
-      sumoLogic.addMessage({ hello: "this is great" }, "warning");
-      expect(sumoLogic.messages[0]["level"]).toEqual("warning");
+    it("supports warning", () => {
+      sumoLogic.warn({ hello: "this is great" });
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        hello: 'this is great',
+        level: "warning",
+      }));
     });
 
     it("ignores an empty object", ()=>{
-      sumoLogic.addMessage("");
-      sumoLogic.addMessage();
-      sumoLogic.addMessage(null);
+      sumoLogic.log("");
+      sumoLogic.log();
+      sumoLogic.log(null);
       expect(sumoLogic.messages.length).toEqual(0);
     });
 
@@ -199,8 +199,8 @@ describe("SumoLogic", ()=>{
       }
 
       it("injects context into the message", ()=>{
-        SumoLogic.context = context;
-        sumoLogic.addMessage("HELLO");
+        sumoLogic = new SumoLogic(validSettings, context);
+        sumoLogic.log("HELLO");
         let message = sumoLogic.messages[0];
         expect(message.context).toEqual(context);
       });

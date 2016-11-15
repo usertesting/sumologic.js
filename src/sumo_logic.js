@@ -3,9 +3,11 @@ import $ from "jquery";
 const SYNC_INTERVAL = 5000;
 
 class SumoLogic {
-  constructor(settings={}) {
+  constructor(settings= {}, context = {}) {
     this.settings = settings;
     this.messages = [];
+    this.context = context;
+    this.syncInterval = SYNC_INTERVAL;
     if (settings.captureConsole === undefined || settings.captureConsole) {
       this.captureConsole();
     }
@@ -14,48 +16,31 @@ class SumoLogic {
     }
   }
 
-  static log(msg) {
-    this.logger = this.logger || new SumoLogic(this.settings);
-    this.logger.log(msg);
+ log(msg) {
+    this._addMessage(msg);
   }
 
-  static dump(cb){
-    this.logger.dump(cb);
+  error(msg) {
+    this._addMessage(msg, 'error');
   }
 
-  static set settings(new_settings) {
-    this._settings = new_settings;
+  warn(msg) {
+    this._addMessage(msg, 'warning');
   }
 
-  static get settings() {
-    return this._settings;
+  info(msg) {
+    this._addMessage(msg);
   }
 
-  static set context(context){
-    this._context = context;
+  dump(success_cb){
+    if(this.messages.length == 0) return;
+
+    this.sendMessages().done((response)=> this.onMessagesSent(response, success_cb));
   }
 
-  static get context(){
-    return this._context;
-  }
-
-  get syncInterval() {
-    return this.settings.syncInterval || SYNC_INTERVAL;
-  }
-
-  
-
-  log(msg) {
-    this.validateSettings();
-    this.addMessage(msg);
-    if(!this.intervalId){
-      this.startDumping();
-    }
-  }
-
-  addMessage(message, level = 'info') {
+  _addMessage(message, level = 'info') {
     if (!message) return;
-
+    this._validateSettings();
     if (typeof(message) === "string"){
       message = { 
         message: message,
@@ -67,20 +52,19 @@ class SumoLogic {
     };
     this.messages.push(
       injectContext(
-        injectTimeStamp(message)
+        injectTimeStamp(message), this.context
       )
     );
+
+    if(!this.intervalId){
+      this.startDumping();
+    }
   }
 
   startDumping() {
     this.intervalId = setInterval(()=> this.dump(), this.syncInterval);
   }
 
-  dump(success_cb){
-    if(this.messages.length == 0) return;
-
-    this.sendMessages().done((response)=> this.onMessagesSent(response, success_cb));
-  }
 
   sendMessages() {
     return $.ajax({
@@ -106,7 +90,7 @@ class SumoLogic {
     this.messages = [];
   }
 
-  validateSettings(){
+  _validateSettings(){
     if(!this.settings.endpoint) {
       throw new Error("Endpoint is missing");
     }
@@ -119,22 +103,22 @@ class SumoLogic {
     const error = console.error;
 
     console.log = (...args) => {
-      this.addMessage(args.join(' '), "info");
+      this._addMessage(args.join(' '), "info");
       return log.apply(console, args);
     };
 
     window.console.info = (...args) => {
-      this.addMessage(args.join(' '), "info");
+      this._addMessage(args.join(' '), "info");
       return info.apply(console, args);
     };
 
     window.console.warn = (...args) => {
-      this.addMessage(args.join(' '), "warn");
+      this._addMessage(args.join(' '), "warning");
       return warn.apply(console, args);
     };
 
     window.console.error = (...args) => {
-      this.addMessage(args.join(' '), "error");
+      this._addMessage(args.join(' '), "error");
       return error.apply(console, args);
     };
   }
@@ -145,7 +129,7 @@ class SumoLogic {
       const message = args[0];
       const fileName = args[1];
       const line = args[2];
-      this.addMessage(`An error '${message}' occured at line ${line} of ${fileName}`, 'error');
+      this._addMessage(`An error '${message}' occured at line ${line} of ${fileName}`, 'error');
       onerror.apply(window, args);
     };
   }
@@ -153,6 +137,6 @@ class SumoLogic {
 
 
 const injectTimeStamp = (msg) => $.extend(msg, { timestamp: new Date().toString() } );
-const injectContext = (msg) => $.extend(msg, { context: SumoLogic.context });
+const injectContext = (msg, context) => $.extend(msg, { context });
 
 export default SumoLogic;
