@@ -6,10 +6,10 @@ class SumoLogic {
   constructor(settings={}) {
     this.settings = settings;
     this.messages = [];
-    if (settings.captureConsole || true) {
+    if (settings.captureConsole === undefined || settings.captureConsole) {
       this.captureConsole();
     }
-    if (settings.captureError || true) {
+    if (settings.captureError === undefined  || settings.captureError) {
       this.captureError();
     }
   }

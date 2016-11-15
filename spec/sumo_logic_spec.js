@@ -5,73 +5,128 @@ describe("SumoLogic", ()=>{
   const validSettings = {
     endpoint: "http://sumologic_endpoint.com",
     syncInterval: 2000,
-    captureConsole: false,
   }
 
   beforeEach(()=>{
     SumoLogic.settings = validSettings;
   });
 
-  describe("if capture console is enabled", () => {
-    it('console.log', () => {
-      const originalFunction = console.log = jasmine.createSpy("log");
-      const sumoLogic = new SumoLogic(validSettings);
-      console.log("This", "is");
-      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-        message: "This is",
-        level: 'info',
-      }));
-      expect(originalFunction).toHaveBeenCalledWith("This", "is");
+  describe("capture console logs", () => {
+    describe("if capture console is disabled", () => {
+      let sumoLogic;
+
+      beforeEach(() => {
+       sumoLogic = new SumoLogic({
+          ...validSettings,
+          captureConsole: false,
+        });
+      });
+
+      it("when console.log is called, it doesn't send any logs to SumoLogic", () => {
+        console.log("This", "is");
+        expect(sumoLogic.messages.length).toEqual(0);
+      });
+
+      it("when console.info is called, it doesn't send any logs to SumoLogic", () => {
+        console.info("This", "is");
+        expect(sumoLogic.messages.length).toEqual(0);
+      });
+
+      it("when console.warn is called, it doesn't send any logs to SumoLogic", () => {
+        console.warn("This", "is");
+        expect(sumoLogic.messages.length).toEqual(0);
+      });
+
+      it("when console.error is called, it doesn't send any logs to SumoLogic", () => {
+        console.error("This", "is");
+        expect(sumoLogic.messages.length).toEqual(0);
+      });
     });
 
-    it('console.info', () => {
-      const originalFunction = console.info = jasmine.createSpy("info");
-      const sumoLogic = new SumoLogic(validSettings);
-      console.info("This", "is");
-      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-        message: "This is",
-        level: 'info',
-      }));
-      expect(originalFunction).toHaveBeenCalledWith("This", "is");
-    });
+    describe("if capture console is enabled", () => {
+      it('console.log', () => {
+        const originalFunction = console.log = jasmine.createSpy("log");
+        const sumoLogic = new SumoLogic(validSettings);
+        console.log("This", "is");
+        expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+          message: "This is",
+          level: 'info',
+        }));
+        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+      });
 
-    it('console.warn', () => {
-      const originalFunction = console.warn = jasmine.createSpy("warn");
-      const sumoLogic = new SumoLogic(validSettings);
-      console.warn("This", "is");
-      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-        message: "This is",
-        level: 'warn',
-      }));
-      expect(originalFunction).toHaveBeenCalledWith("This", "is");
-    });
+      it('console.info', () => {
+        const originalFunction = console.info = jasmine.createSpy("info");
+        const sumoLogic = new SumoLogic(validSettings);
+        console.info("This", "is");
+        expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+          message: "This is",
+          level: 'info',
+        }));
+        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+      });
 
-    it('console.error', () => {
-      const originalFunction = console.error = jasmine.createSpy("error");
-      const sumoLogic = new SumoLogic(validSettings);
-      console.error("This", "is", "an error");
-      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-        message: "This is an error",
-        level: 'error',
-      }));
-      expect(originalFunction).toHaveBeenCalledWith("This", "is", "an error");
-    });
-  })
+      it('console.warn', () => {
+        const originalFunction = console.warn = jasmine.createSpy("warn");
+        const sumoLogic = new SumoLogic(validSettings);
+        console.warn("This", "is");
+        expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+          message: "This is",
+          level: 'warn',
+        }));
+        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+      });
 
-  describe("if capture console is enabled", () => {
-    it('window.onerror', () => {
-      const originalOnError = window.onerror = jasmine.createSpy("onerror");
-      const sumoLogic = new SumoLogic(validSettings);
-      const fileName = "sumo_logic.js";
-      const lineNumber = 302;
-      window.onerror("Missing audio", fileName, lineNumber);
-      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-        message: "An error 'Missing audio' occured at line 302 of sumo_logic.js",
-        level: 'error',
-      }));
-      expect(originalOnError).toHaveBeenCalledWith("Missing audio", fileName, lineNumber);
+      it('console.error', () => {
+        const originalFunction = console.error = jasmine.createSpy("error");
+        const sumoLogic = new SumoLogic(validSettings);
+        console.error("This", "is", "an error");
+        expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+          message: "This is an error",
+          level: 'error',
+        }));
+        expect(originalFunction).toHaveBeenCalledWith("This", "is", "an error");
+      });
     });
   });
+  
+
+  describe("capture errors", () => {
+    describe("if capture errors is disabled", () => {
+      let sumoLogic;
+
+      beforeEach(() => {
+       window.onerror = () => {};
+       sumoLogic = new SumoLogic({
+          ...validSettings,
+          captureError: false,
+        });
+      });
+
+      it('window.onerror', () => {
+        const fileName = "sumo_logic.js";
+        const lineNumber = 302;
+        window.onerror("Missing audio");
+        expect(sumoLogic.messages.length).toEqual(0);
+      });
+    });
+
+    describe("if capture errors is enabled", () => {
+      it('window.onerror', () => {
+        const originalOnError = window.onerror = jasmine.createSpy("onerror");
+        const sumoLogic = new SumoLogic(validSettings);
+        const fileName = "sumo_logic.js";
+        const lineNumber = 302;
+        window.onerror("Missing audio", fileName, lineNumber);
+        expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+          message: "An error 'Missing audio' occured at line 302 of sumo_logic.js",
+          level: 'error',
+        }));
+        expect(originalOnError).toHaveBeenCalledWith("Missing audio", fileName, lineNumber);
+      });
+    });
+  });
+ 
 
   describe("#log", ()=>{
     describe("settings are provided", ()=>{
