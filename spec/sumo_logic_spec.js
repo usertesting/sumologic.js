@@ -47,45 +47,49 @@ describe("SumoLogic", ()=>{
       it('console.log', () => {
         const originalFunction = console.log = jasmine.createSpy("log");
         const sumoLogic = new SumoLogic(validSettings);
-        console.log("This", "is");
+        console.log("This");
         expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-          message: "This is",
+          message: "This",
           level: 'info',
         }));
-        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+        expect(originalFunction).toHaveBeenCalledWith("This");
       });
 
       it('console.info', () => {
         const originalFunction = console.info = jasmine.createSpy("info");
         const sumoLogic = new SumoLogic(validSettings);
-        console.info("This", "is");
+        console.info({
+          hello: 'message',
+        });
         expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-          message: "This is",
+          hello: "message",
           level: 'info',
         }));
-        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+        expect(originalFunction).toHaveBeenCalledWith({
+          hello: 'message',
+        });
       });
 
       it('console.warn', () => {
         const originalFunction = console.warn = jasmine.createSpy("warn");
         const sumoLogic = new SumoLogic(validSettings);
-        console.warn("This", "is");
+        console.warn("This");
         expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
-          message: "This is",
+          message: "This",
           level: 'warning',
         }));
-        expect(originalFunction).toHaveBeenCalledWith("This", "is");
+        expect(originalFunction).toHaveBeenCalledWith("This");
       });
 
       it('console.error', () => {
         const originalFunction = console.error = jasmine.createSpy("error");
         const sumoLogic = new SumoLogic(validSettings);
-        console.error("This", "is", "an error");
+        console.error("This is an error");
         expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
           message: "This is an error",
           level: 'error',
         }));
-        expect(originalFunction).toHaveBeenCalledWith("This", "is", "an error");
+        expect(originalFunction).toHaveBeenCalledWith("This is an error");
       });
     });
   });

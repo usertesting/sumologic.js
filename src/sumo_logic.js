@@ -103,22 +103,22 @@ class SumoLogic {
     const error = console.error;
 
     console.log = (...args) => {
-      this._addMessage(args.join(' '), "info");
+      this._addMessage(args[0], "info");
       return log.apply(console, args);
     };
 
     window.console.info = (...args) => {
-      this._addMessage(args.join(' '), "info");
+      this._addMessage(args[0], "info");
       return info.apply(console, args);
     };
 
     window.console.warn = (...args) => {
-      this._addMessage(args.join(' '), "warning");
+      this._addMessage(args[0], "warning");
       return warn.apply(console, args);
     };
 
     window.console.error = (...args) => {
-      this._addMessage(args.join(' '), "error");
+      this._addMessage(args[0], "error");
       return error.apply(console, args);
     };
   }
