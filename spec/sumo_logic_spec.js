@@ -4,12 +4,73 @@ import $ from 'jquery';
 describe("SumoLogic", ()=>{
   const validSettings = {
     endpoint: "http://sumologic_endpoint.com",
-    syncInterval: 2000
+    syncInterval: 2000,
+    captureConsole: false,
   }
-
 
   beforeEach(()=>{
     SumoLogic.settings = validSettings;
+  });
+
+  describe("if capture console is enabled", () => {
+    it('console.log', () => {
+      const originalFunction = console.log = jasmine.createSpy("log");
+      const sumoLogic = new SumoLogic(validSettings);
+      console.log("This", "is");
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        message: "This is",
+        level: 'info',
+      }));
+      expect(originalFunction).toHaveBeenCalledWith("This", "is");
+    });
+
+    it('console.info', () => {
+      const originalFunction = console.info = jasmine.createSpy("info");
+      const sumoLogic = new SumoLogic(validSettings);
+      console.info("This", "is");
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        message: "This is",
+        level: 'info',
+      }));
+      expect(originalFunction).toHaveBeenCalledWith("This", "is");
+    });
+
+    it('console.warn', () => {
+      const originalFunction = console.warn = jasmine.createSpy("warn");
+      const sumoLogic = new SumoLogic(validSettings);
+      console.warn("This", "is");
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        message: "This is",
+        level: 'warn',
+      }));
+      expect(originalFunction).toHaveBeenCalledWith("This", "is");
+    });
+
+    it('console.error', () => {
+      const originalFunction = console.error = jasmine.createSpy("error");
+      const sumoLogic = new SumoLogic(validSettings);
+      console.error("This", "is", "an error");
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        message: "This is an error",
+        level: 'error',
+      }));
+      expect(originalFunction).toHaveBeenCalledWith("This", "is", "an error");
+    });
+  })
+
+  describe("if capture console is enabled", () => {
+    it('window.onerror', () => {
+      const originalOnError = window.onerror = jasmine.createSpy("onerror");
+      const sumoLogic = new SumoLogic(validSettings);
+      const fileName = "sumo_logic.js";
+      const lineNumber = 302;
+      window.onerror("Missing audio", fileName, lineNumber);
+      expect(sumoLogic.messages[0]).toEqual(jasmine.objectContaining({
+        message: "An error 'Missing audio' occured at line 302 of sumo_logic.js",
+        level: 'error',
+      }));
+      expect(originalOnError).toHaveBeenCalledWith("Missing audio", fileName, lineNumber);
+    });
   });
 
   describe("#log", ()=>{
@@ -58,6 +119,16 @@ describe("SumoLogic", ()=>{
       let currentTime = new Date();
       sumoLogic.addMessage({hello: "this is great"});
       expect(sumoLogic.messages[0]["timestamp"]).toEqual(currentTime.toString());
+    });
+
+    it("adds log level by default", () => {
+      sumoLogic.addMessage({ hello: "this is great" });
+      expect(sumoLogic.messages[0]["level"]).toEqual("info");
+    });
+
+    it("adds provided log level", () => {
+      sumoLogic.addMessage({ hello: "this is great" }, "warning");
+      expect(sumoLogic.messages[0]["level"]).toEqual("warning");
     });
 
     it("ignores an empty object", ()=>{
@@ -119,6 +190,4 @@ describe("SumoLogic", ()=>{
       expect(sumoLogic.messages.length).toEqual(0);
     });
   });
-
-
 });

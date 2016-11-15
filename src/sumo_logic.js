@@ -6,8 +6,14 @@ class SumoLogic {
   constructor(settings={}) {
     this.settings = settings;
     this.messages = [];
+    if (settings.captureConsole || true) {
+      this.captureConsole();
+    }
+    if (settings.captureError || true) {
+      this.captureError();
+    }
   }
-  
+
   static log(msg) {
     this.logger = this.logger || new SumoLogic(this.settings);
     this.logger.log(msg);
@@ -37,6 +43,8 @@ class SumoLogic {
     return this.settings.syncInterval || SYNC_INTERVAL;
   }
 
+  
+
   log(msg) {
     this.validateSettings();
     this.addMessage(msg);
@@ -45,13 +53,23 @@ class SumoLogic {
     }
   }
 
-  addMessage(msg) {
-    if(msg && typeof(msg) === "string"){
-      msg = { message: msg };
+  addMessage(message, level = 'info') {
+    if (!message) return;
+
+    if (typeof(message) === "string"){
+      message = { 
+        message: message,
+      };
     }
-    if(msg){
-      this.messages.push(this.injectContext(this.injectTimeStamp(msg)));
-    }
+    message = {
+      ...message,
+      level,
+    };
+    this.messages.push(
+      injectContext(
+        injectTimeStamp(message)
+      )
+    );
   }
 
   startDumping() {
@@ -94,12 +112,47 @@ class SumoLogic {
     }
   }
 
-  injectTimeStamp(msg) {
-    return $.extend(msg, { timestamp: new Date().toString()} )
+  captureConsole() {
+    const info = console.info;
+    const log = console.log;
+    const warn = console.warn;
+    const error = console.error;
+
+    console.log = (...args) => {
+      this.addMessage(args.join(' '), "info");
+      return log.apply(console, args);
+    };
+
+    window.console.info = (...args) => {
+      this.addMessage(args.join(' '), "info");
+      return info.apply(console, args);
+    };
+
+    window.console.warn = (...args) => {
+      this.addMessage(args.join(' '), "warn");
+      return warn.apply(console, args);
+    };
+
+    window.console.error = (...args) => {
+      this.addMessage(args.join(' '), "error");
+      return error.apply(console, args);
+    };
   }
 
-  injectContext(msg) {
-    return $.extend(msg, {context: SumoLogic.context});
+  captureError() {
+    const onerror = window.onerror;
+    window.onerror = (...args) => {
+      const message = args[0];
+      const fileName = args[1];
+      const line = args[2];
+      this.addMessage(`An error '${message}' occured at line ${line} of ${fileName}`, 'error');
+      onerror.apply(window, args);
+    };
   }
 }
+
+
+const injectTimeStamp = (msg) => $.extend(msg, { timestamp: new Date().toString() } );
+const injectContext = (msg) => $.extend(msg, { context: SumoLogic.context });
+
 export default SumoLogic;
