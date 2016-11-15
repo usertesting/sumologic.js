@@ -69,7 +69,7 @@ class SumoLogic {
   sendMessages() {
     return $.ajax({
       type: "POST",
-      url: SumoLogic.settings.endpoint,
+      url: this.settings.endpoint,
       data: this.sentMessages()
     })
   }
