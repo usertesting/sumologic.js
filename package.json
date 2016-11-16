@@ -1,7 +1,8 @@
 {
   "name": "sumologic.js",
-  "version": "1.0.3",
+  "version": "1.0.4.1",
   "description": "Send logs to SumoLogic HTTP Endpoint",
+  "keywords": ["SumoLogic", "Logging", "logs"],
   "main": "build/sumo_logic.js",
   "scripts": {
     "watch": "node_modules/.bin/babel src/sumo_logic.js --watch --out-file src/sumo_logic.js",
@@ -14,25 +15,41 @@
     "babel-cli": "^6.7.7",
     "babel-core": "^6.7.7",
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
     "babel-polyfill": "^6.7.4",
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.7.2",
     "babel-runtime": "^6.6.1",
+    "eslint": "^3.10.1",
+    "install": "^0.8.2",
     "jasmine": "^2.4.1",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.4.1",
     "jasmine-es6": "^0.1.8",
     "karma": "^0.13.22",
+    "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^0.3.8",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.26",
+    "karma-webpack": "^1.8.0",
+    "npm": "^3.10.9",
     "phantomjs-prebuilt": "^2.1.7",
     "webpack": "^1.13.0"
   },
   "dependencies": {
     "jquery": "^2.2.3"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": false
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    }
   }
 }

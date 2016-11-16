@@ -23,7 +23,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-       "spec/*_spec.js": [ 'webpack',  'sourcemap', 'coverage']
+      "spec/*_spec.js": [ 'webpack',  'coverage']
     },
 
     webpack: {
@@ -67,6 +67,13 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
+    loggers: [
+      { type: 'console' },
+      {
+        type: "file",
+        filename: "karma.log"
+      },
+    ],
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
@@ -74,7 +81,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
 
     // Continuous Integration mode
