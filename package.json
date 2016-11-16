@@ -1,6 +1,6 @@
 {
   "name": "sumologic.js",
-  "version": "1.0.4.1",
+  "version": "1.0.4",
   "description": "Send logs to SumoLogic HTTP Endpoint",
   "keywords": ["SumoLogic", "Logging", "logs"],
   "main": "build/sumo_logic.js",
