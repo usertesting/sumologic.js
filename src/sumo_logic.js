@@ -83,7 +83,14 @@ class SumoLogic {
   }
 
   sentMessages() {
-    return this.messages.map((s) => JSON.stringify(s)).join("\n");
+    return this.messages.map((s) => {
+      const result = '';
+      try {
+        result = JSON.stringify(s);
+      } catch(_err) {
+        // ignore the message
+      }
+    }).join("\n");
   }
 
   clearMessages() {
