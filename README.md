@@ -21,8 +21,9 @@ You need to import `SumoLogic` module:
 
 ```javascript
 const settings = {
-  syncInterval: 3000,
-  endpoint: "{your Sumo Logic http endpoint}"
+  endpoint: "{your Sumo Logic http endpoint}",
+  captureConsole: true,
+  captureError: true,
 };
 
 const sumoLogic = new SumoLogic(settings);
@@ -56,8 +57,11 @@ sumoLogic.warn({
 
 ### Settings:
 `endpoint` (mandatory) provided by SumoLogic when you create an HTTP collection
+
 `syncInterval` (optional - 3000ms by default) is the frequency we're sending the logs to SumoLogic.
+
 `captureConsole` (optional - true by default). To send console logs to SumoLogic; it includes ('warn', 'info', 'log', 'error'). 
+
 `captureError` (optional - true by default). To send runtime errors to SumoLogic. 
 
 #### Context

@@ -84,7 +84,7 @@ class SumoLogic {
 
   sentMessages() {
     return this.messages.map((s) => {
-      const result = '';
+      let result = '';
       try {
         result = JSON.stringify(s);
       } catch(_err) {

@@ -120,7 +120,12 @@ var SumoLogic = function () {
     key: 'sentMessages',
     value: function sentMessages() {
       return this.messages.map(function (s) {
-        return JSON.stringify(s);
+        var result = '';
+        try {
+          result = JSON.stringify(s);
+        } catch (_err) {
+          // ignore the message
+        }
       }).join("\n");
     }
   }, {
