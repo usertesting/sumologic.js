@@ -5,3 +5,4 @@ npm-*
 *.DS_Store
 coverage
 karma.log
+dist
