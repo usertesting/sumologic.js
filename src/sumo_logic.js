@@ -4,6 +4,7 @@ const SYNC_INTERVAL = 5000;
 
 class SumoLogic {
   constructor(settings= {}, context = {}) {
+    
     this.settings = settings;
     this.messages = [];
     this.context = context;
@@ -14,6 +15,7 @@ class SumoLogic {
     if (settings.captureError === undefined  || settings.captureError) {
       this.captureError();
     }
+    this.devMode = settings.devMode;
   }
 
  log(msg) {
@@ -34,7 +36,8 @@ class SumoLogic {
 
   dump(success_cb){
     if(this.messages.length == 0) return;
-
+    if(this.devMode) return;
+    
     this.sendMessages().done((response)=> this.onMessagesSent(response, success_cb));
   }
 

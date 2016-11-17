@@ -24,6 +24,7 @@ const settings = {
   endpoint: "{your Sumo Logic http endpoint}",
   captureConsole: true,
   captureError: true,
+  devMode: false,
 };
 
 const sumoLogic = new SumoLogic(settings);
@@ -64,6 +65,7 @@ sumoLogic.warn({
 
 `captureError` (optional - true by default). To send runtime errors to SumoLogic. 
 
+`devMode` (optional - false by default). To disable sending logs to the server, typically used to disable logging in development mode.
 #### Context
 It is possible to attach context to the logs. Here is how to do it:
 ```javascript

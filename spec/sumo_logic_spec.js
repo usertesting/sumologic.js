@@ -238,6 +238,30 @@ describe("SumoLogic", ()=>{
       let request = jasmine.Ajax.requests.mostRecent();
       expect(request).toEqual(undefined);
     });
+
+    it("send post request only if devMode is false", () => {
+      sumoLogic = new SumoLogic({ 
+        ...validSettings,
+        devMode: false,
+      });
+      sumoLogic.log("Message1");
+      sumoLogic.dump();
+
+      let request = jasmine.Ajax.requests.mostRecent();
+      expect(request).not.toEqual(undefined);
+    });
+
+    it("doesn't post request if devMode is true", () => {
+      sumoLogic = new SumoLogic({ 
+        ...validSettings,
+        devMode: true,
+      });
+      sumoLogic.log("Message1");
+      sumoLogic.dump();
+
+      let request = jasmine.Ajax.requests.mostRecent();
+      expect(request).toEqual(undefined);
+    });
   });
 
   describe("#clearMessages", ()=>{
