@@ -1,6 +1,6 @@
 {
   "name": "sumologic.js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Send logs to SumoLogic HTTP Endpoint",
   "keywords": ["SumoLogic", "Logging", "logs"],
   "main": "./dist/sumo_logic.js",
@@ -41,7 +41,7 @@
     "webpack": "^1.13.0"
   },
   "dependencies": {
-    "jquery": "^2.2.3"
+    "jquery": "^3.0.0"
   },
   "eslintConfig": {
     "env": {
